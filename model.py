@@ -14,14 +14,11 @@ class Model:
 
         'conv2_1', 'relu2_1', 'conv2_2', 'relu2_2', 'pool2',
 
-        'conv3_1', 'relu3_1', 'conv3_2', 'relu3_2', 'conv3_3',
-        'relu3_3', 'conv3_4', 'relu3_4', 'pool3',
+        'conv3_1', 'relu3_1', 'conv3_2', 'relu3_2', 'conv3_3', 'relu3_3', 'conv3_4', 'relu3_4', 'pool3',
 
-        'conv4_1', 'relu4_1', 'conv4_2', 'relu4_2', 'conv4_3',
-        'relu4_3', 'conv4_4', 'relu4_4', 'pool4',
+        'conv4_1', 'relu4_1', 'conv4_2', 'relu4_2', 'conv4_3', 'relu4_3', 'conv4_4', 'relu4_4', 'pool4',
 
-        'conv5_1', 'relu5_1', 'conv5_2', 'relu5_2', 'conv5_3',
-        'relu5_3', 'conv5_4', 'relu5_4'
+        'conv5_1', 'relu5_1', 'conv5_2', 'relu5_2', 'conv5_3', 'relu5_3', 'conv5_4', 'relu5_4'
     ]
 
     def __init__(self, path):
@@ -61,12 +58,12 @@ class Model:
             prev_layer = layer
         return model
 
-def download_weights(url, filename):
+def download_weights(url, filename, path = "./"):
     if not os.path.isfile(filename): 
-        print("Saving weights from {} to {}".format(url, filename))
-        urllib.request.urlretrieve(url, filename)
-
-download_weights(WEIGHTS_URL, WEIGHTS_PATH)
-m = Model(WEIGHTS_PATH)
-m.generate_model()
-print(m)
+        try:
+            os.makedirs(path)
+        except Exception:
+            pass
+        path = os.path.join(path, filename)
+        print("Saving weights from {} to {}".format(url, path))
+        urllib.request.urlretrieve(url, path)
