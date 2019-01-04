@@ -14,8 +14,7 @@ class NeuralStyleTransfer:
         path = os.path.join(weights_path, weights_filename)
         self.model = Model(path).generate_model()
 
-    """
-    Computes the content cost as specified in the research paper
+    """ Computes the content cost as specified in the research paper
     
     Arguments:
     content_img -- a Tensor of dimension (1, height, width, channels), representing the hidden layer activations of the input content image
@@ -57,7 +56,7 @@ class NeuralStyleTransfer:
         return tf.matmul(mat, tf.transpose(mat))
 
     """
-    Computes the total cost function of neural style trnasfer
+    Computes the total cost function of neural style transfer
 
     Arguments:
     content_cost -- a float representing the content_cost
@@ -68,7 +67,37 @@ class NeuralStyleTransfer:
     def total_cost(self, content_cost, style_cost, alpha, beta):
         return alpha*content_cost + beta*style_cost
 
+    """
+    Preprocesses an input image
+    
+    Arguments:
+    image -- a numpy array representing an image
+    """
+    def preprocess(self, image):
+        #VGG19 input image size is (1,h,w,c)
+        image = np.reshape(image, ((1,) + image.shape))
+        #subtract out imagenet means for data to be centered around 0
+        imagenet_means = np.array([123.68, 116.779, 103.939]).reshape((1,1,1,3)) 
+        image = image - imagenet_means
+        return image
+
+    def generate_initial_output(self, content_img):
+        bound = 100
+        noise = np.random.uniform(-bound, bound, content_img.shape).astype("float32")
+        ratio = 0.85
+        rv = noise*ratio + content_img*(1-ratio)
+        return rv
+
     def run(self, content_img, style_img):
-        pass
+        tf.reset_default_graph()
+        sess = tf.InteractiveSession()
 
 nst = NeuralStyleTransfer(WEIGHTS_PATH)
+
+import cv2
+img = cv2.imread("starry_night.jpg")
+img = nst.preprocess(img)
+img = nst.generate_initial_output(img)
+while True:
+    cv2.imshow("test", img[0])
+    cv2.waitKey(10)
