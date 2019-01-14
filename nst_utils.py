@@ -1,4 +1,5 @@
 import numpy as np
+import tensorflow as tf
 import cv2
 
 IMAGENET_MEANS = np.array([123.68, 116.779, 103.939]).reshape((1,1,1,3)) 
@@ -9,8 +10,8 @@ Arguments:
 content_img -- a Tensor of dimension (1, height, width, channels), representing the hidden layer activations of the input content image
 generated_img -- a Tensor of dimension (1, height, width, channels), representing the hidden layer activations of the ouput image
 """
-def content_cost(content_img, generated_img):
-    _, h, w, c = content_img.get_shape().as_list()
+def compute_content_cost(content_img, generated_img):
+    _, h, w, c = content_img.shape
     cost = 1/(4*h*w*c)*tf.reduce_sum(tf.square(content_img-generated_img))
     return cost
 
@@ -22,7 +23,7 @@ style_img -- a Tensor of dimension (1, height, width, channels), representing th
 generated_img -- a Tensor of dimension (1, height, width, channels), representing the hidden layer activations of the output image
 """
 def style_layer_cost(style_img, generated_img):
-    _, h, w, c = style_img.get_shape().as_list()
+    _, h, w, c = style_img.shape
 
     style_img = tf.transpose(tf.reshape(style_img, (h*w, c)))
     generated_img = tf.transpose(tf.reshape(generated_img , (h*w, c)))
@@ -35,8 +36,13 @@ def style_layer_cost(style_img, generated_img):
 
 """
 Computes the style cost through all the layers
+
+Arguments: 
+sess -- a Tensorflow session
+model -- the vgg19 model, from model.py
+style_layers -- a list of the layers to use for computing the style cost, with names from the format in model.py
 """
-def style_cost(sess, model, style_layers):
+def compute_style_cost(sess, model, style_layers):
     style_cost = 0
     num_layers = len(style_layers)
     weight = 1.0/num_layers
@@ -67,7 +73,7 @@ style_cost -- a float representing the style_cost
 alpha -- a float representing the hyperparameter for the content_cost
 beta -- a float representing the hyperparameter for the style cost
 """
-def total_cost(content_cost, style_cost, alpha, beta):
+def compute_total_cost(content_cost, style_cost, alpha, beta):
     return alpha*content_cost + beta*style_cost
 
 """

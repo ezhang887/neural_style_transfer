@@ -2,3 +2,4 @@ venv
 *.swp
 *.mat
 /__pycache__
+output/
