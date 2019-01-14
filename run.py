@@ -16,7 +16,7 @@ def run():
     alpha = 10
     beta = 50
 
-    iterations = 500
+    iterations = 300
 
     output_dir = "output/"
 

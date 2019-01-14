@@ -119,8 +119,8 @@ Arguments:
 image -- a numpy array representing the content image
 """
 def generate_initial_output(content_img):
-    bound = 100
+    bound = 20
     noise = np.random.uniform(-bound, bound, content_img.shape).astype("float32")
-    ratio = 0.85
+    ratio = 0.6
     rv = noise*ratio + content_img*(1-ratio)
     return rv
