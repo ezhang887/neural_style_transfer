@@ -71,10 +71,13 @@ class Model:
     """
     Creates a model with the VGG19 layers
     Returns the model as a dictionary, with the keys in the dictionary being the names in the VGG19_LAYERS list above
+
+    Arguments:
+    input_img_size -- a Tuple representing the input image size to the network in format (h,w)
     """
-    def generate_model(self):
+    def generate_model(self, input_img_size):
         model = {}
-        model['input'] = tf.Variable(np.zeros((1, 224, 224, 3)), dtype = 'float32')
+        model['input'] = tf.Variable(np.zeros((1,)+input_img_size + (3,)), dtype = 'float32')
         prev_layer = "input"
         for layer in self.VGG19_LAYERS:
             layer_type = layer[:4]

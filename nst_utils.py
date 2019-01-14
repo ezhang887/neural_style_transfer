@@ -1,4 +1,4 @@
-from model import *
+import numpy as np
 import cv2
 
 IMAGENET_MEANS = np.array([123.68, 116.779, 103.939]).reshape((1,1,1,3)) 
@@ -75,10 +75,13 @@ Preprocesses an input image
 
 Arguments:
 image -- a numpy array representing an image
+image_size -- tuple of format (h, w) representing the target image size
 """
-def preprocess(image):
+def preprocess(image, image_size):
+    #cv2 reshape is (w,h), so we need to flip the image size tuple
+    image_size = image_size[::-1]
     #VGG19 input image size is (1,h,w,c)
-    image = cv2.resize(image, (224,224))
+    image = cv2.resize(image, image_size)
     image = np.reshape(image, ((1,) + image.shape))
     #subtract out imagenet means for data to be centered around 0
     image = image - IMAGENET_MEANS
@@ -93,7 +96,14 @@ image -- a numpy array representing an image
 def unpreprocess(image):
     image = image + IMAGENET_MEANS
     image = image[0]
-    image = np.clip(image[0], 0, 255)
+    image = np.clip(image, 0, 255).astype("uint8")
+    return image
+
+"""
+Reads in an image given a path
+"""
+def read_image(path):
+    image = cv2.imread(path)
     return image
 
 """
