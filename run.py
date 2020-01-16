@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 from nst_utils import *
 from model import Model
 import tensorflow as tf
